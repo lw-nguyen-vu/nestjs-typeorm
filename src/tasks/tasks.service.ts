@@ -19,19 +19,15 @@ export class TasksService {
   ) {}
 
   async createTask(createTaskDto: CreateTaskDto): Promise<Task> {
-    try {
-      const { title, description } = createTaskDto;
+    const { title, description } = createTaskDto;
 
-      const task = {
-        title,
-        description,
-        status: TaskStatus.OPEN,
-      };
+    const task = {
+      title,
+      description,
+      status: TaskStatus.OPEN,
+    };
 
-      return await this.tasksRepository.save(task);
-    } catch (error) {
-      throw new InternalServerErrorException();
-    }
+    return await this.tasksRepository.save(task);
   }
 
   async getTasks(filterDto: GetTasksFilterDto): Promise<Task[]> {
@@ -50,51 +46,35 @@ export class TasksService {
       );
     }
 
-    try {
-      const tasks = await query.getMany();
+    const tasks = await query.getMany();
 
-      return tasks;
-    } catch (error) {
-      throw new InternalServerErrorException();
-    }
+    return tasks;
   }
 
   async getTaskById(id: string): Promise<Task> {
-    try {
-      const task = await this.tasksRepository.findOneBy({ id });
+    const task = await this.tasksRepository.findOneBy({ id });
 
-      if (!task) {
-        throw new NotFoundException(`Task with ID "${id}" not found`);
-      }
-
-      return task;
-    } catch (error) {
-      throw new InternalServerErrorException();
+    if (!task) {
+      throw new NotFoundException(`Task with ID "${id}" not found`);
     }
+
+    return task;
   }
 
   async updateTask(id: string, updateTaskDto: UpdateTaskDto): Promise<Task> {
-    try {
-      const task = await this.getTaskById(id);
+    const task = await this.getTaskById(id);
 
-      return await this.tasksRepository.save({
-        ...task,
-        ...updateTaskDto,
-      });
-    } catch (error) {
-      throw new InternalServerErrorException();
-    }
+    return await this.tasksRepository.save({
+      ...task,
+      ...updateTaskDto,
+    });
   }
 
   async deleteTask(id: string): Promise<void> {
-    try {
-      const result = await this.tasksRepository.delete({ id });
+    const result = await this.tasksRepository.delete({ id });
 
-      if (result.affected === 0) {
-        throw new NotFoundException(`Task with ID "${id}" not found`);
-      }
-    } catch (error) {
-      throw new InternalServerErrorException();
+    if (result.affected === 0) {
+      throw new NotFoundException(`Task with ID "${id}" not found`);
     }
   }
 }
